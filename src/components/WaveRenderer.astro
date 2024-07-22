@@ -1,0 +1,63 @@
+---
+---
+
+<div id="waveCanvas"></div>
+
+<script>
+  import p5 from 'p5';
+  import { calculateCombinedSignal } from '../scripts/game.js';
+
+  let playerWaves = [{ amplitude: 1, frequency: 1, phase: 0 }];
+  let targetWaves = [{ amplitude: 1, frequency: 2, phase: Math.PI / 4 }];
+
+  new p5(( sketch ) => {
+    let width = 600;
+    let height = 400;
+    let time = 0;
+
+    sketch.setup = () => {
+      sketch.createCanvas(width, height);
+      sketch.strokeWeight(2);
+      sketch.noFill();
+    };
+
+    sketch.draw = () => {
+      sketch.clear();
+      // time += 0.02;
+
+      // Draw target wave
+      sketch.stroke(255, 0, 0, 100);
+      drawWave(targetWaves);
+
+      // Draw player wave
+      sketch.stroke(0, 0, 255, 200);
+      drawWave(playerWaves);
+    };
+
+    function drawWave(waves) {
+      sketch.beginShape();
+      for (let x = 0; x < width; x++) {
+        const normalizedX = (x / width) * 2 * Math.PI;
+        const y = calculateCombinedSignal(waves, normalizedX + time);
+        const canvasY = height / 2 - y * (height / 4);
+        sketch.vertex(x, canvasY);
+      }
+      sketch.endShape();
+    }
+
+    // Expose function to update waves
+    window.updateWaves = (newPlayerWaves, newTargetWaves) => {
+      playerWaves = newPlayerWaves;
+      targetWaves = newTargetWaves;
+    };
+  }, 'waveCanvas');
+</script>
+
+<style>
+  #waveCanvas {
+    width: 600px;
+    height: 400px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+</style>
