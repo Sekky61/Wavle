@@ -1,10 +1,10 @@
-import { GlobalProvider } from './GlobalState';
-import { WaveInput } from './WaveInput';
+import { GlobalProvider } from "./GlobalState";
+import { WaveInput } from "./WaveInput";
 
 export default function App() {
   return (
     <GlobalProvider>
-      <WaveInput/>
+      <WaveInput />
     </GlobalProvider>
   );
 }

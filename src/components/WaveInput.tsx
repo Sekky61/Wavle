@@ -1,6 +1,6 @@
-import { For, Index } from 'solid-js';
-import { useGlobalContext } from './GlobalState';
-import { SubWaveInput } from './SubWaveInput';
+import { For, Index } from "solid-js";
+import { useGlobalContext } from "./GlobalState";
+import { SubWaveInput } from "./SubWaveInput";
 
 export function WaveInput() {
   const [state, actions] = useGlobalContext();

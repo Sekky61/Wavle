@@ -8,31 +8,33 @@ const GlobalContext = createContext();
 
 // Create the provider component
 export function GlobalProvider(props) {
-  console.log('contexting');
+  console.log("contexting");
   const [state, setState] = createStore(new GameState(3, 6));
 
   // Your actions go here
   const actions = {};
 
   // add all actions on the state object
-  const stateKeys = Object.getOwnPropertyNames( GameState.prototype );
-  for (let key of stateKeys) {
-    if (typeof state[key] === 'function') {
+  const stateKeys = Object.getOwnPropertyNames(GameState.prototype);
+  for (const key of stateKeys) {
+    if (typeof state[key] === "function") {
       actions[key] = (...args) => {
-        console.log('calling', key, args);
-        setState(produce((draft) => {
-          console.log('proxy', draft);
-          draft[key](...args);
-        }));
+        console.log("calling", key, args);
+        setState(
+          produce((draft) => {
+            console.log("proxy", draft);
+            draft[key](...args);
+          }),
+        );
       };
     }
   }
   actions.debug = () => {
-    console.log('vole');
+    console.log("vole");
     setState("maxAttempts", 77);
     setState("currentWave", 0, "amplitude", 0.12);
-    console.log('aa', state);
-  }
+    console.log("aa", state);
+  };
 
   return (
     <GlobalContext.Provider value={[state, actions]}>
@@ -49,4 +51,3 @@ export function useGlobalContext() {
   }
   return context;
 }
-
