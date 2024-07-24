@@ -1,10 +1,10 @@
 import { GlobalProvider } from './GlobalState';
-import { WaveControls } from './WaveControls';
+import { WaveInput } from './WaveInput';
 
 export default function App() {
   return (
     <GlobalProvider>
-      <WaveControls waveId={0} />
+      <WaveInput/>
     </GlobalProvider>
   );
 }

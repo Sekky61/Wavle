@@ -4,7 +4,7 @@ type WaveControlsProps = {
   waveId: number;
 }
 
-export function WaveControls(props: WaveControlsProps) {
+export function SubWaveInput(props: WaveControlsProps) {
   const waveId = props.waveId;
 
   const [state, actions] = useGlobalContext();
