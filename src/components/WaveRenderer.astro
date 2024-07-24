@@ -7,11 +7,11 @@
   import p5 from 'p5';
   import { calculateCombinedSignal } from '../scripts/game.js';
 
-  let playerWaves = [{ amplitude: 1, frequency: 1, phase: 0 }];
-  let targetWaves = [{ amplitude: 1, frequency: 2, phase: Math.PI / 4 }];
+  let playerWaves = [];
+  let targetWaves = [];
 
   new p5(( sketch ) => {
-    let width = 600;
+    let width = 1000;
     let height = 400;
     let time = 0;
 
@@ -26,12 +26,16 @@
       // time += 0.02;
 
       // Draw target wave
-      sketch.stroke(255, 0, 0, 100);
-      drawWave(targetWaves);
+      sketch.stroke(0, 0, 0, 100);
+      if(targetWaves.length > 0) {
+        drawWave(targetWaves);
+      }
 
       // Draw player wave
       sketch.stroke(0, 0, 255, 200);
-      drawWave(playerWaves);
+      if(playerWaves.length > 0) {
+        drawWave(playerWaves);
+      }
     };
 
     function drawWave(waves) {
@@ -53,9 +57,10 @@
   }, 'waveCanvas');
 </script>
 
+
 <style>
   #waveCanvas {
-    width: 600px;
+    width: 1000px;
     height: 400px;
     max-width: 100%;
     margin: 0 auto;
