@@ -8,7 +8,7 @@ const GlobalContext = createContext();
 
 // Create the provider component
 export function GlobalProvider(props) {
-  console.log("contexting");
+
   const [state, setState] = createStore(new GameState(3, 6));
 
   // Your actions go here

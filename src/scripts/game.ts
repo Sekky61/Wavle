@@ -3,7 +3,7 @@
  * @description Core game logic for Wavle using a TypeScript class-based approach.
  */
 
-class SineWave {
+export class SineWave {
   constructor(
     public amplitude = 0,
     public frequency = 1,
@@ -11,7 +11,7 @@ class SineWave {
   ) {}
 }
 
-class GameState {
+export class GameState {
   targetWave: SineWave[] = [];
   /**
    * This is called wave. The elements are called subwaves.
@@ -33,7 +33,8 @@ class GameState {
       .map(() => new SineWave(0, 0, 0));
   }
 
-  initializeGame(difficulty: number): void {
+  initializeGame(difficulty: number, maxWaves: number): void {
+    this.maxWaves = maxWaves;
     this.targetWave = this.generateTargetWave(difficulty);
   }
 
@@ -81,7 +82,7 @@ class GameState {
     this.playerWaves.splice(index, 1);
   }
 
-  private calculateCombinedSignal(waves: SineWave[], x: number): number {
+  public calculateCombinedSignal(waves: SineWave[], x: number): number {
     return waves.reduce(
       (sum, wave) =>
         sum + wave.amplitude * Math.sin(wave.frequency * x + wave.phase),
