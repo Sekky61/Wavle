@@ -8,7 +8,6 @@ const GlobalContext = createContext();
 
 // Create the provider component
 export function GlobalProvider(props) {
-
   const [state, setState] = createStore(new GameState(3, 6));
 
   // Your actions go here
@@ -19,22 +18,14 @@ export function GlobalProvider(props) {
   for (const key of stateKeys) {
     if (typeof state[key] === "function") {
       actions[key] = (...args) => {
-        console.log("calling", key, args);
         setState(
           produce((draft) => {
-            console.log("proxy", draft);
             draft[key](...args);
           }),
         );
       };
     }
   }
-  actions.debug = () => {
-    console.log("vole");
-    setState("maxAttempts", 77);
-    setState("currentWave", 0, "amplitude", 0.12);
-    console.log("aa", state);
-  };
 
   return (
     <GlobalContext.Provider value={[state, actions]}>

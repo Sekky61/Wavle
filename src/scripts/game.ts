@@ -16,13 +16,24 @@ export class GameState {
   /**
    * This is called wave. The elements are called subwaves.
    */
-  currentWave: SineWave[] = [];
+  currentWave: SineWave[] = null;
+
+  /**
+   * Submitted attempts
+   */
   playerWaves: SineWave[][] = [];
-  maxWaves: number;
+
+  /**
+   * Maximum number of subwaves in a wave
+   */
+  maxWaves: number = 5;
+
+  /**
+   * Maximum number of attempts (game ends)
+   */
   maxAttempts: number;
 
-  constructor(maxWaves = 3, maxAttempts = 6) {
-    this.maxWaves = maxWaves;
+  constructor(maxAttempts = 6) {
     this.maxAttempts = maxAttempts;
     this.currentWave = this.defaultWave();
   }
@@ -59,14 +70,14 @@ export class GameState {
   }
 
   submitPlayerWave(): void {
-    if (this.playerWaves.length < this.maxWaves) {
+    if (this.playerWaves.length < this.maxAttempts) {
       this.playerWaves.push(this.currentWave);
-      this.currentWave = [];
+      this.currentWave = this.defaultWave();
     }
   }
 
   getLastPlayerWave(): SineWave[] {
-    return this.playerWaves[this.playerWaves.length - 1] || [];
+    return this.playerWaves[this.playerWaves.length - 1] || null;
   }
 
   updateCurrentWave(newWave: SineWave[]): void {
@@ -75,7 +86,6 @@ export class GameState {
 
   updateCurrentSubWave(index: number, newSubWave: SineWave): void {
     this.currentWave[index] = newSubWave;
-    console.log("after", this.currentWave);
   }
 
   removePlayerWave(index: number): void {

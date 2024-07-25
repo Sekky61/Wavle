@@ -6,11 +6,8 @@ type WaveControlsProps = {
 
 export function SubWaveInput(props: WaveControlsProps) {
   const waveId = props.waveId;
-
   const [state, actions] = useGlobalContext();
   const subWave = () => state.currentWave[waveId];
-
-  console.log("subwave", subWave);
 
   const changeAmplitude = (e) => {
     const val = Number.parseFloat(e.target.value);
@@ -18,11 +15,32 @@ export function SubWaveInput(props: WaveControlsProps) {
     actions.updateCurrentSubWave(waveId, subWaveCopy);
   };
 
+  const changeFrequency = (e) => {
+    const val = Number.parseFloat(e.target.value);
+    const subWaveCopy = { ...subWave(), frequency: val };
+    actions.updateCurrentSubWave(waveId, subWaveCopy);
+  };
+
+  const changePhase = (e) => {
+    const val = Number.parseFloat(e.target.value);
+    const subWaveCopy = { ...subWave(), phase: val };
+    actions.updateCurrentSubWave(waveId, subWaveCopy);
+  };
+
+  const inputClasses =
+    "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700";
+  const labelClasses =
+    "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+  const numberInputClasses =
+    "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+
   return (
-    <div class="wave-controls">
-      <div class="sliders">
-        <div class="slider-group">
-          <label for="amplitude">Amplitude</label>
+    <div class="wave-controls bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <div class="space-y-6">
+        <div>
+          <label for="amplitude" class={labelClasses}>
+            Amplitude
+          </label>
           <input
             type="range"
             id="amplitude"
@@ -31,6 +49,7 @@ export function SubWaveInput(props: WaveControlsProps) {
             step="0.01"
             onInput={changeAmplitude}
             value={subWave().amplitude}
+            class={inputClasses}
           />
           <input
             type="number"
@@ -40,17 +59,22 @@ export function SubWaveInput(props: WaveControlsProps) {
             step="0.01"
             onInput={changeAmplitude}
             value={subWave().amplitude}
+            class={numberInputClasses}
           />
         </div>
-        <div class="slider-group">
-          <label for="frequency">Frequency</label>
+        <div>
+          <label for="frequency" class={labelClasses}>
+            Frequency
+          </label>
           <input
             type="range"
             id="frequency"
             min="0"
             max="10"
             step="0.1"
-            value="1"
+            onInput={changeFrequency}
+            value={subWave().frequency}
+            class={inputClasses}
           />
           <input
             type="number"
@@ -58,18 +82,24 @@ export function SubWaveInput(props: WaveControlsProps) {
             min="0"
             max="10"
             step="0.1"
-            value="1"
+            onInput={changeFrequency}
+            value={subWave().frequency}
+            class={numberInputClasses}
           />
         </div>
-        <div class="slider-group">
-          <label for="phase">Phase</label>
+        <div>
+          <label for="phase" class={labelClasses}>
+            Phase
+          </label>
           <input
             type="range"
             id="phase"
             min="0"
             max="6.28"
             step="0.01"
-            value="0"
+            onInput={changePhase}
+            value={subWave().phase}
+            class={inputClasses}
           />
           <input
             type="number"
@@ -77,19 +107,12 @@ export function SubWaveInput(props: WaveControlsProps) {
             min="0"
             max="6.28"
             step="0.01"
-            value="0"
+            onInput={changePhase}
+            value={subWave().phase}
+            class={numberInputClasses}
           />
         </div>
       </div>
-      <button
-        id="submit-wave"
-        onClick={() => {
-          actions.debug();
-          console.log(state);
-        }}
-      >
-        Submit
-      </button>
     </div>
   );
 }

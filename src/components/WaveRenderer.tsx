@@ -16,6 +16,9 @@ export function WaveRenderer() {
     const vertices = [];
     for (let x = 0; x < width(); x++) {
       const normalizedX = (x / width()) * 2 * Math.PI;
+      if (!waves) {
+        console.warn("No waves", waves);
+      }
       const y = state.calculateCombinedSignal(waves, normalizedX + time());
       const canvasY = height() / 2 - y * (height() / 4);
       vertices.push(new Two.Anchor(x, canvasY));
@@ -48,16 +51,25 @@ export function WaveRenderer() {
     setHeight(two.height);
 
     // Create the wave path
-    const path = two.makePath();
-    path.noFill();
-    path.stroke = "rgb(0, 200, 255)";
-    path.linewidth = 2;
-    path.closed = false;
+    const targetPath = two.makePath();
+    targetPath.noFill();
+    targetPath.stroke = "rgb(0, 200, 255)";
+    targetPath.linewidth = 2;
+    targetPath.closed = false;
+
+    // Last attempt wave path
+    const lastAttemptPath = two.makePath();
+    lastAttemptPath.noFill();
+    lastAttemptPath.stroke = "rgb(255, 0, 0)";
+    lastAttemptPath.linewidth = 2;
+    lastAttemptPath.closed = false;
 
     // Animation
     two.bind("update", (frameCount: number) => {
-      setTime(frameCount * 0.01); // Adjust this value to change animation speed
-      drawWave(path, state.targetWave);
+      setTime(frameCount * 0.005); // Adjust this value to change animation speed
+      drawWave(targetPath, state.targetWave);
+      const lastWave = state.getLastPlayerWave();
+      if (lastWave) drawWave(lastAttemptPath, lastWave);
     });
 
     // Set up ResizeObserver
@@ -65,7 +77,6 @@ export function WaveRenderer() {
     console.log(container);
     resizeObserver.observe(container);
   });
-
 
   onCleanup(() => {
     resizeObserver.disconnect();

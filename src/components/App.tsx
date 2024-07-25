@@ -6,9 +6,13 @@ import { WaveRenderer } from "./WaveRenderer";
 export default function App() {
   return (
     <GlobalProvider>
-      <GameControls />
+      <div class="flex justify-center">
+        <GameControls />
+      </div>
       <WaveRenderer />
+      <div class="flex justify-center">
       <WaveInput />
+      </div>
     </GlobalProvider>
   );
 }
