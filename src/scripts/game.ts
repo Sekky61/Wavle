@@ -12,7 +12,16 @@ export class SineWave {
 }
 
 export class GameState {
+  /**
+   * Difficulty level
+   */
+  difficulty = 3;
+
+  /**
+   * This is the target wave that the player must match.
+   */
   targetWave: SineWave[] = [];
+
   /**
    * This is called wave. The elements are called subwaves.
    */
@@ -31,40 +40,80 @@ export class GameState {
   /**
    * Maximum number of attempts (game ends)
    */
-  maxAttempts: number;
+  maxAttempts = 6;
 
-  constructor(maxAttempts = 6) {
-    this.maxAttempts = maxAttempts;
+  /**
+   * Whether to use phase in the game
+   */
+  usePhase = false;
+
+  constructor() {
     this.currentWave = this.defaultWave();
   }
 
   defaultWave(): SineWave[] {
     return Array(this.maxWaves)
       .fill(0)
-      .map(() => new SineWave(0, 0, 0));
+      .map(() => new SineWave());
   }
 
-  initializeGame(difficulty: number, maxWaves: number): void {
-    this.maxWaves = maxWaves;
-    this.targetWave = this.generateTargetWave(difficulty);
+  /**
+   * Reset the playing state. Generates a new target wave.
+   * If changes to difficulty are desired, mutate the state before calling this
+   * function.
+   */
+  initializeGame(): void {
+    this.targetWave = this.generateTargetWave(this.difficulty);
   }
 
-  private generateTargetWave(difficulty: number): SineWave[] {
+  // Helper function to generate frequency
+  generateFrequency(): number {
+    const rand = Math.random();
+    if (rand < 0.1) {
+      return generateNumber(0.1, 1.0);
+    } else if (rand < 0.9) {
+      return generateNumber(1.0, 5.0);
+    } else {
+      return generateNumber(5.0, 20.0);
+    }
+  }
+
+  // Helper function to generate phase
+  generatePhase(): number {
+    return this.usePhase ? generateNumber(0, Math.PI * 2, 2) : 0;
+  }
+
+  generateTargetWave(difficulty: number): SineWave[] {
     const waves: SineWave[] = [];
-    const numWaves = Math.min(difficulty, 5);
+    const numWaves = this.maxWaves;
 
     for (let i = 0; i < numWaves; i++) {
       waves.push(
-        new SineWave(
-          Math.random() * 0.5 + 0.5,
-          Math.random() * difficulty + 1,
-          Math.random() * Math.PI * 2,
-        ),
+        new SineWave(0, this.generateFrequency(), this.generatePhase()),
       );
     }
 
-    const totalAmplitude = waves.reduce((sum, wave) => sum + wave.amplitude, 0);
-    waves.forEach((wave) => (wave.amplitude /= totalAmplitude));
+    // Ensure at least one wave has a significant amplitude
+    if (numWaves > 0 && waves.every((wave) => wave.amplitude < 0.5)) {
+      const index = Math.floor(Math.random() * numWaves);
+      waves[index].amplitude = generateNumber(0.5, 1.0);
+    }
+
+    // generate amplitudes for n waves by generating n-1 random numbers
+    // between 0 and 1 and then computing the intervals between them
+    const intervals = Array(numWaves - 1)
+      .fill(0)
+      .map(() => generateNumber(0.1, 0.9)); // actually limit to 0.1-0.9, so we are less likely to get 0 amplitude
+    intervals.unshift(0);
+    intervals.push(1);
+
+    intervals.sort((a, b) => a - b);
+    console.log("interval", intervals);
+
+    for (let i = 1; i <= numWaves; i++) {
+      const amplitude = intervals[i] - intervals[i - 1];
+      waves[i - 1].amplitude = amplitude;
+    }
 
     return waves;
   }
@@ -149,6 +198,12 @@ export class GameState {
   getState(): GameState {
     return this;
   }
+}
+
+// Helper function to generate a number within a range and round it
+function generateNumber(min: number, max: number, decimals = 1): number {
+  const value = Math.random() * (max - min) + min;
+  return Number(value.toFixed(decimals));
 }
 
 export default GameState;

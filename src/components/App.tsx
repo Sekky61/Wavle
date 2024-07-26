@@ -1,4 +1,4 @@
-import { GameControls } from "./GameControls";
+import { GameMenu, GameMenuContainer } from "./GameMenu";
 import { GlobalProvider } from "./GlobalState";
 import { WaveInput } from "./WaveInput";
 import { WaveRenderer } from "./WaveRenderer";
@@ -6,12 +6,10 @@ import { WaveRenderer } from "./WaveRenderer";
 export default function App() {
   return (
     <GlobalProvider>
-      <div class="flex justify-center">
-        <GameControls />
-      </div>
+      <GameMenuContainer />
       <WaveRenderer />
       <div class="flex justify-center">
-      <WaveInput />
+        <WaveInput />
       </div>
     </GlobalProvider>
   );

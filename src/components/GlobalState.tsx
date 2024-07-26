@@ -1,4 +1,10 @@
-import { createContext, createEffect, on, useContext } from "solid-js";
+import {
+  createContext,
+  createEffect,
+  createMemo,
+  on,
+  useContext,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { produce } from "solid-js/store";
 import GameState from "../scripts/game.ts";
@@ -12,11 +18,9 @@ type GlobalContextType = {
 // Create the context
 const GlobalContext = createContext<GlobalContextType>();
 
-const maxAttempts = 6;
-
 // Create the provider component
 export function GlobalProvider(props) {
-  const [state, setState] = createStore(new GameState(maxAttempts));
+  const [state, setState] = createStore(new GameState());
 
   // Your actions go here
   const actions = {};
@@ -35,9 +39,13 @@ export function GlobalProvider(props) {
     }
   }
 
-  const gameStatus = () => {
+  actions.initializeGame();
+  console.log("game init", state.targetWave);
+
+  // Track _change_ in game status. Will not fire if the game status is the same.
+  const gameStatus = createMemo(() => {
     return state.getGameStatus();
-  };
+  });
 
   // React to new submission
   createEffect(() => {

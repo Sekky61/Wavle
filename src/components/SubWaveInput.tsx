@@ -1,3 +1,4 @@
+import { Show } from "solid-js";
 import { useGlobalContext } from "./GlobalState";
 
 type WaveControlsProps = {
@@ -6,7 +7,7 @@ type WaveControlsProps = {
 
 export function SubWaveInput(props: WaveControlsProps) {
   const waveId = props.waveId;
-  const {state, actions} = useGlobalContext();
+  const { state, actions } = useGlobalContext();
   const subWave = () => state.currentWave[waveId];
 
   const changeAmplitude = (e) => {
@@ -87,6 +88,7 @@ export function SubWaveInput(props: WaveControlsProps) {
             class={numberInputClasses}
           />
         </div>
+        <Show when={state.usePhase}>
         <div>
           <label for="phase" class={labelClasses}>
             Phase
@@ -112,6 +114,7 @@ export function SubWaveInput(props: WaveControlsProps) {
             class={numberInputClasses}
           />
         </div>
+        </Show>
       </div>
     </div>
   );

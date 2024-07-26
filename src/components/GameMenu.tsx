@@ -1,28 +1,48 @@
-import { createEffect, createSignal } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import { useGlobalContext } from "./GlobalState";
 
-export function GameControls() {
-  const {state, actions} = useGlobalContext();
+/**
+ * Shows the menu based on state
+ */
+export function GameMenuContainer() {
+  const { gameStatus } = useGlobalContext();
+
+  return (
+    <Show when={gameStatus() !== "playing"}>
+      <div class="bg-gray-500/25 absolute inset-0 flex items-center justify-center">
+        <GameMenu />
+      </div>
+    </Show>
+  );
+}
+
+export function GameMenu() {
+  const { state, actions } = useGlobalContext();
   const [difficulty, setDifficulty] = createSignal(1);
   const [waves, setWaves] = createSignal(1);
 
   const startGame = () => {
     // Start game logic here
-    actions.initializeGame(difficulty(), waves());
+    actions.initializeGame();
   };
 
   const resetGame = () => {
     // Reset game logic here
-    actions.initializeGame(difficulty(), waves());
+    actions.initializeGame();
   };
 
- const inputClasses = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
-  const labelClasses = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
-  const buttonClasses = "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out mb-4";
+  const inputClasses =
+    "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+  const labelClasses =
+    "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+  const buttonClasses =
+    "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out mb-4";
 
   return (
     <div class="game-menu bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-      <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Game Menu</h2>
+      <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+        Game Menu
+      </h2>
 
       <div class="space-y-4">
         <button onClick={startGame} class={buttonClasses}>
