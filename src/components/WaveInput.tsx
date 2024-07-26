@@ -3,7 +3,7 @@ import { useGlobalContext } from "./GlobalState";
 import { SubWaveInput } from "./SubWaveInput";
 
 export function WaveInput() {
-  const [state, actions] = useGlobalContext();
+  const {state, actions} = useGlobalContext();
   const waveCount = () => state.maxWaves;
 
   const submitWave = () => {

@@ -1,14 +1,22 @@
-import { createContext, useContext } from "solid-js";
+import { createContext, createEffect, on, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import { produce } from "solid-js/store";
 import GameState from "../scripts/game.ts";
 
+type GlobalContextType = {
+  state: GameState;
+  actions: Record<string, Function>;
+  gameStatus: () => string;
+};
+
 // Create the context
-const GlobalContext = createContext();
+const GlobalContext = createContext<GlobalContextType>();
+
+const maxAttempts = 6;
 
 // Create the provider component
 export function GlobalProvider(props) {
-  const [state, setState] = createStore(new GameState(3, 6));
+  const [state, setState] = createStore(new GameState(maxAttempts));
 
   // Your actions go here
   const actions = {};
@@ -27,8 +35,28 @@ export function GlobalProvider(props) {
     }
   }
 
+  const gameStatus = () => {
+    return state.getGameStatus();
+  };
+
+  // React to new submission
+  createEffect(() => {
+    const gameState = gameStatus();
+    switch (gameState) {
+      case "win":
+        console.log("You win!");
+        break;
+      case "lose":
+        console.log("You lose!");
+        break;
+      case "playing":
+        console.log("Keep playing!");
+        break;
+    }
+  });
+
   return (
-    <GlobalContext.Provider value={[state, actions]}>
+    <GlobalContext.Provider value={{ state, actions, gameStatus }}>
       {props.children}
     </GlobalContext.Provider>
   );

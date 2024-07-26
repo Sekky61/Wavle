@@ -2,7 +2,7 @@ import { createEffect, createSignal } from "solid-js";
 import { useGlobalContext } from "./GlobalState";
 
 export function GameControls() {
-  const [state, actions] = useGlobalContext();
+  const {state, actions} = useGlobalContext();
   const [difficulty, setDifficulty] = createSignal(1);
   const [waves, setWaves] = createSignal(1);
 

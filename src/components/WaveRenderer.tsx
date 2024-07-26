@@ -4,7 +4,7 @@ import type { SineWave } from "../scripts/game";
 import { useGlobalContext } from "./GlobalState";
 
 export function WaveRenderer() {
-  const [state, actions] = useGlobalContext();
+  const {state, actions} = useGlobalContext();
   let container: HTMLDivElement | undefined;
   let two: Two | undefined;
   const [width, setWidth] = createSignal(0);

@@ -6,7 +6,7 @@ type WaveControlsProps = {
 
 export function SubWaveInput(props: WaveControlsProps) {
   const waveId = props.waveId;
-  const [state, actions] = useGlobalContext();
+  const {state, actions} = useGlobalContext();
   const subWave = () => state.currentWave[waveId];
 
   const changeAmplitude = (e) => {

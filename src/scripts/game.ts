@@ -26,7 +26,7 @@ export class GameState {
   /**
    * Maximum number of subwaves in a wave
    */
-  maxWaves: number = 5;
+  maxWaves = 5;
 
   /**
    * Maximum number of attempts (game ends)
@@ -40,7 +40,7 @@ export class GameState {
 
   defaultWave(): SineWave[] {
     return Array(this.maxWaves)
-      .fill()
+      .fill(0)
       .map(() => new SineWave(0, 0, 0));
   }
 
@@ -76,7 +76,7 @@ export class GameState {
     }
   }
 
-  getLastPlayerWave(): SineWave[] {
+  getLastPlayerWave(): SineWave[] | null {
     return this.playerWaves[this.playerWaves.length - 1] || null;
   }
 
@@ -127,15 +127,23 @@ export class GameState {
 
   hasWinningAttempt(): boolean {
     const lastWave = this.getLastPlayerWave();
-    if (lastWave.length === 0) return false;
+    if (!lastWave || lastWave.length === 0) return false;
     const similarity = this.compareSignals(lastWave, this.targetWave);
     return similarity > 95;
   }
 
-  isGameOver(): boolean {
-    return (
-      this.hasWinningAttempt() || this.playerWaves.length >= this.maxAttempts
-    );
+  /**
+   * Returns the current game status
+   * @returns "win" | "lose" | "playing"
+   */
+  getGameStatus(): "win" | "lose" | "playing" {
+    if (this.hasWinningAttempt()) {
+      return "win";
+    } else if (this.playerWaves.length >= this.maxAttempts) {
+      return "lose";
+    } else {
+      return "playing";
+    }
   }
 
   getState(): GameState {
