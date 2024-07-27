@@ -4,6 +4,22 @@
  */
 
 export class SineWave {
+
+  /**
+   * Amplitude of the wave in units
+   */
+  amplitude: number;
+
+  /**
+   * Frequency of the wave in Hz
+   */
+  frequency: number;
+
+  /**
+   * Phase of the wave in radians
+   */
+  phase: number;
+
   constructor(
     public amplitude = 0,
     public frequency = 1,
@@ -70,11 +86,11 @@ export class GameState {
   generateFrequency(): number {
     const rand = Math.random();
     if (rand < 0.1) {
-      return generateNumber(0.1, 1.0);
+      return generateNumber(1.0, 2.0, 0);
     } else if (rand < 0.9) {
-      return generateNumber(1.0, 5.0);
+      return generateNumber(1.0, 5.0, 0);
     } else {
-      return generateNumber(5.0, 20.0);
+      return generateNumber(5.0, 20.0, 0);
     }
   }
 

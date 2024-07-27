@@ -1,4 +1,4 @@
-import { GameMenu, GameMenuContainer } from "./GameMenu";
+import { GameMenuContainer } from "./GameMenu";
 import { GlobalProvider } from "./GlobalState";
 import { WaveInput } from "./WaveInput";
 import { WaveRenderer } from "./WaveRenderer";
