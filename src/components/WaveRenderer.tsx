@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import Two from "two.js";
 import type { SineWave } from "../scripts/game";
 import { useGlobalContext } from "./GlobalState";
@@ -85,7 +85,6 @@ export function WaveRenderer() {
     // we need enough clones of the path to fill the screen
     const pathWidth = path.getBoundingClientRect().width;
     const numClones = Math.ceil((width() + pathWidth) / pathWidth);
-    console.log("numClones", numClones);
     const group = two.makeGroup();
     for (let i = 0; i < numClones; i++) {
       const clone = path.clone(group);
@@ -153,12 +152,24 @@ export function WaveRenderer() {
       const offsetFrame = (pixelsPerSecond * deltaMs) / 1000;
 
       moveWave(targetWaveGroup, offsetFrame);
-      if (lastAttemptWaveGroup) moveWave(lastAttemptWaveGroup, offsetFrame);
+      if (lastAttemptWaveGroup) {
+        moveWave(lastAttemptWaveGroup, offsetFrame);
+      }
     });
 
     // Set up resize observer
     resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(container);
+  });
+
+  createEffect(() => {
+    const count = state.playerWaves.length; // has to be length, .playerWaves does not work probably because it is an array
+    const lastWave = state.getLastPlayerWave();
+    if (!lastWave) return;
+    if (lastAttemptWaveGroup) {
+      lastAttemptWaveGroup.remove();
+    }
+    lastAttemptWaveGroup = createWaveGroup(lastWave, "rgb(255, 0, 0)");
   });
 
   onCleanup(() => {
