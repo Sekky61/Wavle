@@ -4,7 +4,6 @@
  */
 
 export class SineWave {
-
   /**
    * Amplitude of the wave in units
    */
@@ -20,19 +19,19 @@ export class SineWave {
    */
   phase: number;
 
-  constructor(
-    public amplitude = 0,
-    public frequency = 1,
-    public phase = 0,
-  ) {}
+  constructor(amplitude = 0, frequency = 1, phase = 0) {
+    this.amplitude = amplitude;
+    this.frequency = frequency;
+    this.phase = phase;
+  }
 }
 
-export class GameState {
-  /**
-   * Difficulty level
-   */
-  difficulty = 3;
+/**
+ * The frequencies that are allowed to be generated and guessed
+ */
+export const allowedFrequencies = [1, 2, 3, 4, 5];
 
+export class GameState {
   /**
    * This is the target wave that the player must match.
    */
@@ -49,11 +48,6 @@ export class GameState {
   playerWaves: SineWave[][] = [];
 
   /**
-   * Maximum number of subwaves in a wave
-   */
-  maxWaves = 5;
-
-  /**
    * Maximum number of attempts (game ends)
    */
   maxAttempts = 6;
@@ -67,10 +61,11 @@ export class GameState {
     this.currentWave = this.defaultWave();
   }
 
+  /**
+   * Initial wave
+   */
   defaultWave(): SineWave[] {
-    return Array(this.maxWaves)
-      .fill(0)
-      .map(() => new SineWave());
+    return allowedFrequencies.map((freq) => new SineWave(1, freq, 0));
   }
 
   /**
@@ -79,11 +74,13 @@ export class GameState {
    * function.
    */
   initializeGame(): void {
-    this.targetWave = this.generateTargetWave(this.difficulty);
+    this.targetWave = this.generateTargetWave();
   }
 
-  // Helper function to generate frequency
-  generateFrequency(): number {
+  /**
+   * Helper function to generate amplitude
+   */
+  generateAmplitude(): number {
     const rand = Math.random();
     if (rand < 0.1) {
       return generateNumber(1.0, 2.0, 0);
@@ -99,22 +96,7 @@ export class GameState {
     return this.usePhase ? generateNumber(0, Math.PI * 2, 2) : 0;
   }
 
-  generateTargetWave(difficulty: number): SineWave[] {
-    const waves: SineWave[] = [];
-    const numWaves = this.maxWaves;
-
-    for (let i = 0; i < numWaves; i++) {
-      waves.push(
-        new SineWave(0, this.generateFrequency(), this.generatePhase()),
-      );
-    }
-
-    // Ensure at least one wave has a significant amplitude
-    if (numWaves > 0 && waves.every((wave) => wave.amplitude < 0.5)) {
-      const index = Math.floor(Math.random() * numWaves);
-      waves[index].amplitude = generateNumber(0.5, 1.0);
-    }
-
+  generateAmplitudes(numWaves: number): number[] {
     // generate amplitudes for n waves by generating n-1 random numbers
     // between 0 and 1 and then computing the intervals between them
     const intervals = Array(numWaves - 1)
@@ -124,11 +106,30 @@ export class GameState {
     intervals.push(1);
 
     intervals.sort((a, b) => a - b);
-    console.log("interval", intervals);
 
+    const amplitudes: number[] = [];
     for (let i = 1; i <= numWaves; i++) {
       const amplitude = intervals[i] - intervals[i - 1];
-      waves[i - 1].amplitude = amplitude;
+      amplitudes.push(amplitude);
+    }
+
+    return amplitudes;
+  }
+
+  generateTargetWave(): SineWave[] {
+    const waves: SineWave[] = [];
+    const numWaves = allowedFrequencies.length;
+    const amplitudes = this.generateAmplitudes(numWaves);
+
+    for (let i = 0; i < allowedFrequencies.length; i++) {
+      const freq = allowedFrequencies[i];
+      waves.push(new SineWave(amplitudes[i], freq, this.generatePhase()));
+    }
+
+    // Ensure at least one wave has a significant amplitude
+    if (numWaves > 0 && waves.every((wave) => wave.amplitude < 0.5)) {
+      const index = Math.floor(Math.random() * numWaves);
+      waves[index].amplitude = generateNumber(0.5, 1.0);
     }
 
     return waves;

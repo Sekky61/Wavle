@@ -48,13 +48,15 @@ export function WaveRenderer() {
     path.closed = false;
 
     // Calculate chunk (period) width relative to canvas width
-    const chunkPeriod = getChunkPeriodLength(waves) * 2 * Math.PI;
+    const chunkPeriod = getChunkPeriodLength(waves) * 20 * Math.PI;
     const canvasXAxisWidth = 4 * Math.PI;
     const chunksPerCanvas = canvasXAxisWidth / chunkPeriod;
     const chunkWidthPx = width() / chunksPerCanvas;
 
     const verticesPerPixel = 0.5;
     const chunkResolution = Math.ceil(chunkWidthPx * verticesPerPixel);
+
+    console.dir(waves);
 
     console.log(
       "period",
@@ -70,7 +72,7 @@ export function WaveRenderer() {
     );
 
     const vertices = [];
-    for (let i = 0; i < chunkResolution; i++) {
+    for (let i = 0; i <= chunkResolution; i++) {
       const x = (i / chunkResolution) * chunkWidthPx;
       const normalizedX = (i / chunkResolution) * 2 * Math.PI;
       const y = state.calculateCombinedSignal(waves, normalizedX);
@@ -82,10 +84,10 @@ export function WaveRenderer() {
 
     // we need enough clones of the path to fill the screen
     const pathWidth = path.getBoundingClientRect().width;
-    const numClones = Math.ceil(width() / pathWidth);
+    const numClones = Math.ceil((width() + pathWidth) / pathWidth);
+    console.log("numClones", numClones);
     const group = two.makeGroup();
-    group.add(path);
-    for (let i = 1; i < numClones; i++) {
+    for (let i = 0; i < numClones; i++) {
       const clone = path.clone(group);
       clone.position.x = i * pathWidth;
       if (i === 0) {
@@ -95,6 +97,8 @@ export function WaveRenderer() {
       }
       group.add(clone);
     }
+
+    path.remove();
 
     return group;
   };
@@ -145,12 +149,11 @@ export function WaveRenderer() {
     // Animate waves
     two.bind("update", () => {
       const deltaMs = two.timeDelta;
-      const pixelsPerSecond = 200;
+      const pixelsPerSecond = 100;
       const offsetFrame = (pixelsPerSecond * deltaMs) / 1000;
 
-      const offset = offsetFrame;
-      moveWave(targetWaveGroup, offset);
-      if (lastAttemptWaveGroup) moveWave(lastAttemptWaveGroup, offset);
+      moveWave(targetWaveGroup, offsetFrame);
+      if (lastAttemptWaveGroup) moveWave(lastAttemptWaveGroup, offsetFrame);
     });
 
     // Set up resize observer
